@@ -1,0 +1,1269 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Управління Реєстрами ДСОМ",
+    "description": "**Загальні правила:**\n\n**Дати:**\nДля відсутності додаткової логіки, пов'язаної з обробкою таймзон: \n- Усі календарні дати ПОВИННІ бути надіслані у вигляді кількості днів, що пройшли з 1 Січня 1970 року 00:00 GMT.\n- Усі часові позначки (timestamp) ПОВИННІ бути надіслани у вигляді кількості мілісекунд що пройшли з 1 Січня 1970 року 00:00 GMT.\n",
+    "contact": {
+      "email": "daniil.grudzinsky@gmail.com"
+    },
+    "version": "1.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://gateway-frontend.dev.gamblingmonitoring.org/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Організатори азартних ігор",
+      "description": "Запити що використовуються для перегляду і модифікації реєстрів організаторів азартних ігор"
+    },
+    {
+      "name": "Гральні заклади",
+      "description": "Запити що використовуються для перегляду і модифікації реєстрів гральних закладів"
+    },
+    {
+      "name": "Ліцензії організаторів азартних ігор",
+      "description": "Запити що використовуються для перегляду і модифікації реєстрів ліцензій організаторів азартних ігор"
+    },
+    {
+      "name": "Ліцензії на гральне обладнання",
+      "description": "Запити що використовуються для перегляду і модифікації реєстрів Ліцензій на гральне обладнання"
+    }
+  ],
+  "paths": {
+    "/api/v1/gambling-organizers": {
+      "get": {
+        "tags": [
+          "Організатори азартних ігор"
+        ],
+        "summary": "Запит для перегляду усіх організатора азартних ігор в системі",
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GamblingOrganizer"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Організатори азартних ігор"
+        ],
+        "summary": "Запит для створення організатора азартних ігор в системі",
+        "description": "В нового організатора повинне бути унікальне ЄДРПОУ, назва і адреса.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GamblingOrganizerCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GamblingOrganizerCreateResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/gambling-organizers/{id}": {
+      "delete": {
+        "tags": [
+          "Організатори азартних ігор"
+        ],
+        "summary": "Запит для видалення організатора азартних ігор в системі",
+        "description": "Щоб видалити організатора потрібно вказати id вже існуючого організатора і для нього не повинні існувати прив’язані ставки, обмінні операції, ліцензії організатора азартних ігор або гральні заклади.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id грального закладу якому потрібно анулювати ліцензію",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано"
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/establishments": {
+      "get": {
+        "tags": [
+          "Гральні заклади"
+        ],
+        "summary": "Запит для перегляду усіх гральних в системі",
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EstablishmentResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Гральні заклади"
+        ],
+        "summary": "Запит для створення грального закладу в системі",
+        "description": "Новий заклад повинен мати унікальну адресу і номер дозволу, також створюючи його потрібно вказати ЄДРПОУ вже існуючого в системі організатора азартних ігор.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstablishmentCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EstablishmentResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/establishments/{id}": {
+      "delete": {
+        "tags": [
+          "Гральні заклади"
+        ],
+        "summary": "Запит для видалення грального закладу в системі",
+        "description": "Щоб видалити заклад потрібно вказати id вже існуючого закладу і для нього не повинні існувати прив’язані ставки, обмінні операції і ліцензії організатора азартних ігор або обладнання.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id грального закладу якому потрібно анулювати ліцензію",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано"
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/establishments/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Гральні заклади"
+        ],
+        "summary": "Запит для анулювання дозволу на проведення азартних ігор в гральному закладі",
+        "description": "Для того щоб анулювати дозвіл потрібно щоб його статус був “Активним” і вказана дата ануляції була не менша за дату видачі.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id грального закладу якому потрібно анулювати ліцензію",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано"
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/gambling-licenses": {
+      "get": {
+        "tags": [
+          "Ліцензії організаторів азартних ігор"
+        ],
+        "summary": "Запит для перегляду усіх ліцензії організаторів азартних ігор в системі",
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LicenseResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Ліцензії організаторів азартних ігор"
+        ],
+        "summary": "Запит для створення ліцензії організатора азартних ігор в системі",
+        "description": "Нова ліцензія повинна мати ЄДРПОУ вже існуючого в системі організатора азартних ігор і id вже існуючих закладів.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LicenseCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LicenseResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/gambling-licenses/{id}": {
+      "delete": {
+        "tags": [
+          "Ліцензії організаторів азартних ігор"
+        ],
+        "summary": "Запит для видалення ліцензії організатора азартних ігор в системі",
+        "description": "Щоб видалити ліцензію потрібно вказати id вже існуючої ліцензії і для неї не повинні існувати прив’язані ставки, обмінні операції і ліцензії на обладнання.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id грального закладу якому потрібно анулювати ліцензію",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано"
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/gambling-licenses/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Ліцензії організаторів азартних ігор"
+        ],
+        "summary": "Запит для анулювання ліцензії організатора азартних ігор",
+        "description": "Для того щоб анулювати ліцензію потрібно щоб її статус був “Активним” і вказана дата ануляції була не менша за дату видачі.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id грального закладу якому потрібно анулювати ліцензію",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано"
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/equipment-licenses": {
+      "get": {
+        "tags": [
+          "Ліцензії на гральне обладнання"
+        ],
+        "summary": "Запит для перегляду усіх ліцензії на гральне обладнання в системі",
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EquipnmentLicenseResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Ліцензії на гральне обладнання"
+        ],
+        "summary": "Запит для створення ліцензії на гральне обладнання в системі",
+        "description": "Нова ліцензія повинна мати ЄДРПОУ вже існуючого в системі організатора азартних ігор, id вже існуючого закладу, існуючу ліцензію організатора азартних ігор і коректний EquipmentType.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EquipmentLicenseCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EquipnmentLicenseResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/equipment-licenses/{id}": {
+      "delete": {
+        "tags": [
+          "Ліцензії на гральне обладнання"
+        ],
+        "summary": "Запит для видалення ліцензії на гральне обладнання в системі",
+        "description": "Щоб видалити ліцензію потрібно вказати id вже існуючої ліцензії і для неї не повинні існувати прив’язані ставки.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id ліцензії на гральне обладнання яке потрібно видалити",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано"
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/equipment-licenses/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Ліцензії на гральне обладнання"
+        ],
+        "summary": "Запит для анулювання ліцензії на гральне обладнання ігор",
+        "description": "Для того щоб анулювати ліцензію потрібно щоб її статус був “Активним” і вказана дата ануляції була не менша за дату видачі.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id ліцензії на гральне обладнання якому потрібно анулювати ліцензію",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Запит успішно виконано"
+          },
+          "401": {
+            "description": "вказаний JWT не валідний, або це не правильний токен, або час його дії закінчився"
+          },
+          "403": {
+            "description": "вказаний JWT токен не дозволяє виконати данний запит",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "виникла внутрішня помиилка на сторні сервера",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EquipmentType": {
+        "type": "string",
+        "enum": [
+          "Table",
+          "Roulette",
+          "SlotMachine"
+        ]
+      },
+      "GamblingType": {
+        "type": "string",
+        "enum": [
+          "Casino",
+          "Internet",
+          "SportBet",
+          "SlotMachine",
+          "Poker"
+        ]
+      },
+      "LicenceStatusRequest": {
+        "type": "string",
+        "enum": [
+          "valid",
+          "canceled"
+        ]
+      },
+      "LicenceStatus": {
+        "type": "string",
+        "enum": [
+          "Valid",
+          "Invalid",
+          "Canceled"
+        ]
+      },
+      "EquipmentLicenseCreateRequest": {
+        "required": [
+          "equipmentType",
+          "establishmentId",
+          "expirationDate",
+          "instanceNumbers",
+          "issueDate",
+          "licenceNumber",
+          "licenceStatus",
+          "number"
+        ],
+        "type": "object",
+        "properties": {
+          "establishmentId": {
+            "type": "integer"
+          },
+          "equipmentType": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "licenceNumber": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "licenceStatus": {
+            "$ref": "#/components/schemas/LicenceStatusRequest"
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expirationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancellationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "instanceNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "EquipnmentLicenseResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "establishmentId": {
+            "type": "integer"
+          },
+          "equipmentType": {
+            "$ref": "#/components/schemas/EquipmentType"
+          },
+          "equipmentTypeId": {
+            "type": "integer"
+          },
+          "number": {
+            "type": "string"
+          },
+          "licenceNumber": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "licenceStatus": {
+            "$ref": "#/components/schemas/LicenceStatus"
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "expirationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "cancellationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "instanceNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "LicenseCreateRequest": {
+        "required": [
+          "brand",
+          "edrpou",
+          "establishments",
+          "expirationDate",
+          "gamblingType",
+          "issueDate",
+          "licenceStatus",
+          "number"
+        ],
+        "type": "object",
+        "properties": {
+          "edrpou": {
+            "type": "string"
+          },
+          "gamblingType": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "licenceStatus": {
+            "$ref": "#/components/schemas/LicenceStatusRequest"
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expirationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancellationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "establishments": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "LicenseResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "edrpou": {
+            "type": "string"
+          },
+          "gamblingType": {
+            "$ref": "#/components/schemas/GamblingType"
+          },
+          "gamblingTypeId": {
+            "type": "integer"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "licenceStatus": {
+            "$ref": "#/components/schemas/LicenceStatus"
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "expirationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "cancellationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "establishments": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "CancelRequest": {
+        "type": "object",
+        "properties": {
+          "cancellationDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EstablishmentCreateRequest": {
+        "required": [
+          "address",
+          "edrpou",
+          "isOnline",
+          "permissionDate",
+          "permissionNumber",
+          "permissionStatus"
+        ],
+        "type": "object",
+        "properties": {
+          "edrpou": {
+            "type": "string"
+          },
+          "isOnline": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string"
+          },
+          "permissionNumber": {
+            "type": "string"
+          },
+          "permissionDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "permissionStatus": {
+            "$ref": "#/components/schemas/LicenceStatusRequest"
+          },
+          "cancellationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "EstablishmentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "edrpou": {
+            "type": "string"
+          },
+          "isOnline": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string"
+          },
+          "permissionNumber": {
+            "type": "string"
+          },
+          "permissionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "permissionStatus": {
+            "$ref": "#/components/schemas/LicenceStatus"
+          },
+          "cancellationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "GamblingOrganizerCreateResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "edrpou": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        }
+      },
+      "GamblingOrganizerCreateRequest": {
+        "required": [
+          "address",
+          "edrpou",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "edrpou": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        }
+      },
+      "GamblingOrganizer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "edrpou": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
