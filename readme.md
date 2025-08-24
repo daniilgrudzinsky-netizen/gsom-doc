@@ -14,9 +14,10 @@
 | ERD/схема БД, міграції. | Кожна з груп сервісів що має базу має відповідну ERD діаграму, наприклад [EventsWarehousing](containers/EventWarehousing/readme.md#components)  |
 | Каталог подій/черг (схеми Avro/JSON, контракти). |  Кожна з груп сервісів що слугує РПЦ хостом або слухає події має відповідну ERD діаграму, наприклад [EventsWarehousing](containers/EventWarehousing/readme.md#listen-as)  |
 | Перелік зовнішніх інтеграцій: протоколи, точки входу, контракти, SLA/обмеження. | Відсутні |
-| API: OpenAPI/Swagger або Postman-колекції, вебхуки. | Дивись поруч з [context](context/readme.md#context-diagram)  |
+| API: OpenAPI/Swagger або Postman-колекції, вебхуки. | Дивись поруч з [context](context/readme.md#context-diagram), з прив'язкою до dev середовища   |
 | AuthN/AuthZ (OIDC/SAML/Keycloak/SSO), ролі/права. | правила доступу до системи описані в секціі [authorization](code/readme.md#authorization)  |
 | Secrets management (Vault/KMS), політики доступу. | політика роботи з секретами описана в секціі [secrets-management-and-security](code/readme.md#secrets-management-and-security) |
 | Мережева сегментація, ізоляція середовищ. | дивись секцію [networking](code/readme.md#networking) |
+
 
 
